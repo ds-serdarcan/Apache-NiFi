@@ -1,0 +1,19 @@
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
+import java.time.format.DateTimeFormatter;
+
+// Bu ayın son gününü ve 0 ay öncenin ilk gününü bul
+LocalDateTime now = LocalDateTime.now().plusHours(3);
+
+LocalDate startOfMonth = now.minusMonths(0).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate();
+
+// Tarihleri istediğiniz formata çevirin
+String startDateFormatted = startOfMonth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+// FlowFile'a attribute olarak ekleyin
+flowFile = session.get();
+if (flowFile != null) {
+    flowFile = session.putAttribute(flowFile, "update_time", startDateFormatted);
+    session.transfer(flowFile, REL_SUCCESS);
+}
