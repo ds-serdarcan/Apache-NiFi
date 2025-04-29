@@ -33,3 +33,21 @@ keytool -import \
   -alias rootCA \
   -keystore truststore.jks \
   -storepass <truststore_parolası>
+
+
+----------------------------
+
+.env dosyasına aşağıdaki bilgileri giriyoruz.
+
+NIFI_SECURITY_KEYSTOREPASSWD=keystoreParolam
+NIFI_SECURITY_TRUSTSTOREPASSWD=truststoreParolam
+SINGLE_USER_CREDENTIALS_USERNAME=user
+SINGLE_USER_CREDENTIALS_PASSWORD=sifre
+
+--------------------------
+
+vim  /etc/hosts ile açarak 
+10.0.8.45    nifi.ebalina.com ekliyoruz.
+
+docker compose up -d komutu ile uygulamayı ayağa kaldırıyoruz.
+nginx yönlendirmesi ardından dışarıdan erişilebilir oluyor.
