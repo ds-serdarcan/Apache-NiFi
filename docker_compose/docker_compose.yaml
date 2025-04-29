@@ -1,0 +1,43 @@
+services:
+  nifi:
+    image: apache/nifi:1.28.0
+    container_name: nifi
+    user: root
+    networks:
+      - nifi_network
+    ports:
+      #- "8080:8080"  # HTTP portu
+      - "8443:8443"
+    environment:
+      #- NIFI_WEB_HTTPS_HOST=nifi.ebalina.com
+      - NIFI_WEB_PROXY_HOST=nifi,ip_adress:8443,sub.domain.com:8443
+      - NIFI_WEB_HTTP_HOST=ip_adress:8443,sub.domain.com:8443
+      - NIFI_WEB_HTTPS_PORT=8443  # HTTPS'i etkinleştir
+        #- NIFI_WEB_HTTP_PORT=   # HTTP'yi etkinleştir
+      - NIFI_SECURITY_KEYSTORE=/opt/nifi/nifi-current/certs/keystore.jks
+      - NIFI_SECURITY_KEYSTORE_TYPE=PKCS12
+      - NIFI_SECURITY_KEYSTOREPASSWD=${NIFI_SECURITY_KEYSTOREPASSWD}
+      - NIFI_SECURITY_KEYPASSWD=${NIFI_SECURITY_KEYSTOREPASSWD}
+      - NIFI_SECURITY_TRUSTSTORE=/opt/nifi/nifi-current/certs/truststore.jks
+      - NIFI_SECURITY_TRUSTSTORE_TYPE=PKCS12
+      - NIFI_SECURITY_TRUSTSTOREPASSWD=${NIFI_SECURITY_TRUSTSTOREPASSWD}
+      - SINGLE_USER_CREDENTIALS_USERNAME=${SINGLE_USER_CREDENTIALS_USERNAME}
+      - SINGLE_USER_CREDENTIALS_PASSWORD=${SINGLE_USER_CREDENTIALS_PASSWORD}
+
+      - NIFI_SECURITY_USER_AUTHORIZER=single-user-authorizer
+      - NIFI_SECURITY_ALLOW_ANONYMOUS_AUTHENTICATION=false
+    hostname: "nifi"
+    restart: unless-stopped
+    volumes:
+      - /root/nifi/certs:/opt/nifi/nifi-current/certs
+      - nifi_data:/opt/nifi/nifi-current  # Tek bir volume kullanarak tüm Nifi verilerini bağla
+    env_file:
+      - .env
+# Tek bir volume tanımlaması
+volumes:
+  nifi_data:
+
+networks:
+  nifi_network:
+    driver: bridge
+# Tek bir volume tanımlaması
