@@ -1,0 +1,35 @@
+PKCS12 (PFX) Formatında Keystore Oluşturma
+
+Öncelikle, özel anahtar ve sertifika dosyalarınızı kullanarak `.p12` uzantılı geçici bir keystore oluşturuyoruz:
+
+openssl pkcs12 -export \
+  -in certificate.crt \
+  -inkey private.key \
+  -certfile ca-bundle.crt \
+  -out keystore.p12 \
+  -name nifi-cert
+
+
+----------------------------
+
+Java uygulamaları için gerekli olan .jks formatını aşağıdaki komutla oluşturun:
+
+keytool -importkeystore \
+  -deststorepass <keystore_parolası> \
+  -destkeypass <keystore_parolası> \
+  -destkeystore keystore.jks \
+  -srckeystore keystore.p12 \
+  -srcstoretype PKCS12 \
+  -srcstorepass <p12_parolası> \
+  -alias nifi-cert
+
+---------------------------
+
+CA sertifikalarınızı içeren truststore.jks dosyasını aşağıdaki komutla oluşturun:
+
+keytool -import \
+  -trustcacerts \
+  -file ca-bundle.crt \
+  -alias rootCA \
+  -keystore truststore.jks \
+  -storepass <truststore_parolası>
